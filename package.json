@@ -1,6 +1,6 @@
 {
   "name": "large-vuetify-project",
-  "version": "0.0.0",
+  "version": "100.1000.1000000",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
@@ -12,6 +12,7 @@
     "core-js": "^3.37.1",
     "roboto-fontface": "*",
     "vue": "^3.4.31",
+    "vue-i18n": "^9.8.0",
     "vuetify": "^3.6.11"
   },
   "devDependencies": {

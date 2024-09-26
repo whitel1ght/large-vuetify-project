@@ -8,14 +8,21 @@
 
     <v-app-bar title="Application bar"></v-app-bar>
 
-    <v-main class="d-flex flex-column align-center justify-center" style="min-height: 300px;">
-      <h2>Table example</h2>
-      <x-table />
+    <v-main
+      class="d-flex flex-column align-center justify-center"
+      style="min-height: 300px;"
+    >
+      <h2>{{ props.title }}</h2>
+      <slot />
     </v-main>
   </v-layout>
 </template>
 
 <script setup>
-import XTable from '@/components/Table.vue'
-
+const props = defineProps({
+  title: {
+    type: String,
+    required: true
+  }
+})
 </script>
