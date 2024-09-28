@@ -12,8 +12,7 @@
           <v-btn
             class="mb-2"
             color="primary"
-            dark
-            v-bind="props"
+            @click="showAddUser = true"
           >
             + User
           </v-btn>
@@ -39,14 +38,14 @@
     </v-data-table>
 
     <add-user-dialog
-      v-if="addUserDialog"
-      v-model="addUserDialog"
+      v-if="showAddUser"
+      v-model="showAddUser"
       @submit="addUser"
     />
 
     <edit-user-dialog
-      v-if="editUserDialog"
-      v-model="editUserDialog"
+      v-if="showEditUser"
+      v-model="showEditUser"
       @submit="updateUser"
     />
 
@@ -68,8 +67,8 @@ const EditUserDialog = defineAsyncComponent(() => import('@/components/dialogs/E
 const loading = ref(false)
 const users = ref([])
 
-const addUserDialog = ref(false)
-const editUserDialog = ref(false)
+const showAddUser = ref(false)
+const showEditUser = ref(false)
 
 // methods
 function addUser(user) {
