@@ -46,6 +46,7 @@
     <edit-user-dialog
       v-if="showEditUser"
       v-model="showEditUser"
+      :user="userToEdit"
       @submit="updateUser"
     />
 
@@ -66,6 +67,7 @@ const EditUserDialog = defineAsyncComponent(() => import('@/components/dialogs/E
 
 const loading = ref(false)
 const users = ref([])
+const userToEdit = ref(null)
 
 const showAddUser = ref(false)
 const showEditUser = ref(false)
@@ -80,8 +82,9 @@ function updateUser(user) {
   users.value[index] = user
 }
 
-function editItem(item) {
-  console.log('editItem', item)
+function editItem(user) {
+  userToEdit.value = user
+  showEditUser.value = true
 }
 
 function deleteItem(item) {

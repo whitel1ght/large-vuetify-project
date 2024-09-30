@@ -1,3 +1,7 @@
 {
-  "users": "Users"
+  "users": "Users",
+  "types": {
+    "withNumber": "User With Number",
+    "withToken": "User With Token"
+  }
 }
