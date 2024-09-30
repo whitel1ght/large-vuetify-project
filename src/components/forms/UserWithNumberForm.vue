@@ -6,13 +6,13 @@
       required
     />
     <v-text-field
-      v-model="form.accessToken"
-      label="Access Token"
+      v-model="form.phoneNumber"
+      label="Phone Number"
       required
     />
     <v-text-field
-      v-model="form.refreshToken"
-      label="Refresh Token"
+      v-model="form.messengers"
+      label="Messengers"
       required
     />
   </v-form>
@@ -28,8 +28,8 @@ const props = defineProps({
 
 const data = {
   name: '',
-  accessToken: '',
-  refreshToken: ''
+  phoneNumber: '',
+  messengers: ''
 }
 
 // refs
@@ -68,8 +68,8 @@ const submit = async () => {
 
   const data = {
     name: form.name,
-    accessToken: form.accessToken,
-    refreshToken: form.refreshToken
+    phoneNumber: form.phoneNumber,
+    messengers: form.messengers
   }
 
   if (props.userData) {
