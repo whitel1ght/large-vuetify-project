@@ -1,7 +1,5 @@
 <template>
-  <v-form
-    ref="firstFormRef"
-  >
+  <v-form ref="userWithNumberForm">
     <v-text-field
       v-model="form.name"
       label="Name"
@@ -35,14 +33,14 @@ const data = {
 }
 
 // refs
-const firstFormRef = ref(null)
+const userWithNumberForm = ref(null)
 
 // reactive
 const form = reactive(data)
 
 // methods
 const onClose = () => {
-  firstFormRef.value.resetValidation()
+  userWithNumberForm.value.resetValidation()
   Object.assign(form, data)
 }
 
@@ -65,7 +63,7 @@ const update = async data => {
 }
 
 const submit = async () => {
-  const { valid = false } = await firstFormRef.value.validate()
+  const { valid = false } = await userWithNumberForm.value.validate()
   if (!valid) return
 
   const data = {
