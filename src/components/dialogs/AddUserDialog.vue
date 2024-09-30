@@ -39,7 +39,7 @@
         </v-stepper-window-item>
       </v-stepper-window>
 
-      <div class="d-flex justify-space-between align-center p-4">
+      <div class="d-flex justify-space-between align-center mx-4 py-2">
         <v-btn
           v-if="step > 1"
           variant="text"
@@ -77,10 +77,11 @@ import UserTypeForm from '@/components/forms/UserTypeForm.vue'
 import mitt from 'mitt'
 
 const props = defineProps({ modelValue: Boolean })
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'close:dialog', 'submit:form'])
 
 // consts
 const eventBus = mitt()
+
 // refs
 const step = ref(1)
 const type = ref('User With Number')
@@ -117,5 +118,9 @@ function submit() {
   } else {
     next()
   }
+}
+
+function close() {
+  console.log('close')
 }
 </script>
