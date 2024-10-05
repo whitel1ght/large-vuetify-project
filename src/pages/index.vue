@@ -40,7 +40,7 @@
     <add-user-dialog
       v-if="showAddUser"
       v-model="showAddUser"
-      @submit="addUser"
+      @submit:form="addUser"
     />
 
     <edit-user-dialog
@@ -57,13 +57,13 @@
 // vue
 import { ref, defineAsyncComponent } from 'vue'
 // components
-import CoreLayout from '@/layouts/CoreLayout.vue'
+import CoreLayout from '@/layouts/CoreLayout'
 // utils
 import { headers } from '@/utils/users'
 import { usersResponse } from '@/mock/usersResponse'
 // async components
-const AddUserDialog = defineAsyncComponent(() => import('@/components/dialogs/AddUserDialog.vue'))
-const EditUserDialog = defineAsyncComponent(() => import('@/components/dialogs/EditUserDialog.vue'))
+const AddUserDialog = defineAsyncComponent(() => import('@/components/dialogs/AddUserDialog'))
+const EditUserDialog = defineAsyncComponent(() => import('@/components/dialogs/EditUserDialog'))
 
 const loading = ref(false)
 const users = ref([])
@@ -74,6 +74,7 @@ const showEditUser = ref(false)
 
 // methods
 function addUser(user) {
+  console.log('addUser', user)
   users.value.push(user)
 }
 

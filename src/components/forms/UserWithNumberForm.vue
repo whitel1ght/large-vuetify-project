@@ -19,12 +19,15 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onBeforeUnmount } from 'vue'
+import { UserType } from '@/types/User'
 
 const props = defineProps({
   user: Object,
   eventBus: Object
 })
+
+const emit = defineEmits(['submit:form', 'close:dialog'])
 
 const data = {
   name: '',
@@ -40,6 +43,7 @@ const form = reactive(data)
 
 // methods
 const onClose = () => {
+  emit('close:dialog')
   userWithNumberForm.value.resetValidation()
   Object.assign(form, data)
 }
@@ -48,9 +52,9 @@ const create = async data => {
   await new Promise(resolve => {
     setTimeout(() => {
       resolve('created')
+      console.log('created', data)
     }, 1000)
   })
-  onClose()
 }
 
 const update = async data => {
@@ -59,7 +63,6 @@ const update = async data => {
       resolve('updated')
     }, 1000)
   })
-  onClose()
 }
 
 const submit = async () => {
@@ -67,20 +70,30 @@ const submit = async () => {
   if (!valid) return
 
   const data = {
+    type: UserType.WITH_NUMBER,
     name: form.name,
     phoneNumber: form.phoneNumber,
     messengers: form.messengers
   }
 
-  if (props.userData) {
-    await update(userData)
+  if (props.user) {
+    await update(data)
   } else {
-    await create(userData)
+    await create(data)
   }
+  emit('submit:form', data)
+  onClose()
 }
 
-props.eventBus.on('submit', () => {
-  emit('submit:form')
-  onClose()
+props.eventBus.on('submit', submit)
+
+onBeforeUnmount(() => {
+  props.eventBus.off('submit', submit)
 })
+
+//
+
+if (props.user) {
+  Object.assign(form, props.user)
+}
 </script>

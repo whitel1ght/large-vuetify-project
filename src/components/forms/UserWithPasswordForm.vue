@@ -12,28 +12,31 @@
     />
     <v-text-field
       v-model="form.password"
-      type="password"
       label="Password"
-      :autocomplete="false"
       required
     />
   </v-form>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue'
+<script setup lang="ts">
+import { ref, reactive, onUnmounted } from 'vue'
+// types
+import { UserType } from '@/types/User'
+import { UserWithPassword } from '@/types/UserWithPassword'
+import { Emitter } from 'mitt'
 
-const props = defineProps({
-  eventBus: Object
-})
+type Events = { 'submit': void }
 
-const data = {
-  name: '',
-  surname: '',
-  password: ''
+interface UserWithPasswordFormProps {
+  eventBus: Emitter<Events>
+  user: UserWithPassword
 }
 
+const props = defineProps<UserWithPasswordFormProps>()
+const emit = defineEmits(['submit:form'])
+
 // refs
+const data = { name: '', surname: '', password: '' }
 const userWithPasswordForm = ref(null)
 
 // reactive
@@ -45,7 +48,7 @@ const onClose = () => {
   Object.assign(form, data)
 }
 
-const create = async data => {
+const create = async () => {
   await new Promise(resolve => {
     setTimeout(() => {
       resolve('created')
@@ -54,7 +57,7 @@ const create = async data => {
   onClose()
 }
 
-const update = async data => {
+const update = async () => {
   await new Promise(resolve => {
     setTimeout(() => {
       resolve('updated')
@@ -64,24 +67,33 @@ const update = async data => {
 }
 
 const submit = async () => {
-  const { valid = false } = await userWithNumberForm.value.validate()
+  const { valid = false } = await userWithPasswordForm.value.validate()
   if (!valid) return
 
-  const data = {
+  const data: UserWithPassword = {
+    type: UserType.WITH_PASSWORD,
     name: form.name,
     surname: form.surname,
     password: form.password
   }
 
-  if (props.userData) {
-    await update(userData)
+  if (props.user) {
+    await update(data)
   } else {
-    await create(userData)
+    await create(data)
   }
+
+  emit('submit:form', data)
 }
 
-props.eventBus.on('submit', () => {
-  emit('submit:form')
-  onClose()
+props.eventBus.on('submit', submit)
+
+onUnmounted(() => {
+  props.eventBus.off('submit', submit)
 })
+
+//
+if (props.user) {
+  Object.assign(form, props.user)
+}
 </script>
