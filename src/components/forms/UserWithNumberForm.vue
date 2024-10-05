@@ -2,24 +2,23 @@
   <v-form ref="userWithNumberForm">
     <v-text-field
       v-model="form.name"
-      label="Name"
-      required
+      :label="t('Users.withNumber.name')"
     />
     <v-text-field
       v-model="form.phoneNumber"
-      label="Phone Number"
-      required
+      :label="t('Users.withNumber.phoneNumber')"
     />
     <v-text-field
       v-model="form.messengers"
-      label="Messengers"
-      required
+      :label="t('Users.withNumber.messengers')"
     />
   </v-form>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onBeforeUnmount, Ref } from 'vue'
+// composables
+import { useI18n } from 'vue-i18n'
 // types
 import { UserType } from '@/types/User'
 import type { UserWithNumber } from '@/types/UserWithNumber'
@@ -34,6 +33,9 @@ interface UserWithNumberFormProps {
 
 const props = defineProps<UserWithNumberFormProps>()
 const emit = defineEmits(['submit:form'])
+
+// composables
+const { t } = useI18n()
 
 // constants
 const data = { name: '', phoneNumber: '', messengers: '' }

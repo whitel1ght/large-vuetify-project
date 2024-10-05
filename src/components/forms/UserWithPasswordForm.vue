@@ -2,24 +2,22 @@
   <v-form ref="userWithPasswordForm">
     <v-text-field
       v-model="form.name"
-      label="Name"
-      required
+      :label="t('Users.withPassword.name')"
     />
     <v-text-field
       v-model="form.surname"
-      label="Surname"
-      required
+      :label="t('Users.withPassword.surname')"
     />
     <v-text-field
       v-model="form.password"
-      label="Password"
-      required
+      :label="t('Users.withPassword.password')"
     />
   </v-form>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onUnmounted, Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 // types
 import { UserType } from '@/types/User'
 import { UserWithPassword } from '@/types/UserWithPassword'
@@ -35,6 +33,8 @@ interface UserWithPasswordFormProps {
 const props = defineProps<UserWithPasswordFormProps>()
 const emit = defineEmits(['submit:form'])
 
+// composables
+const { t } = useI18n()
 // constants
 const data = { name: '', surname: '', password: '' }
 

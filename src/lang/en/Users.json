@@ -3,5 +3,15 @@
   "types": {
     "withNumber": "User With Number",
     "withToken": "User With Token"
+  },
+  "withNumber": {
+    "name": "Name",
+    "phoneNumber": "Phone Number",
+    "messangers": "Messangers"
+  },
+  "withPassword": {
+    "name": "Name",
+    "surname": "Surname",
+    "password": "Password"
   }
 }
