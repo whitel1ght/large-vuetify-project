@@ -1,7 +1,9 @@
 {
+  "feature:add-user": "",
   "users": "Users",
   "types": {
     "withNumber": "User With Number",
+    "withPassword": "User With Password",
     "withToken": "User With Token"
   },
   "withNumber": {

@@ -14,7 +14,7 @@ export const usersResponse: User[] = [
     type: UserType.WITH_NUMBER,
     name: 'Jane Doe',
     phoneNumber: 1234567890,
-    messengers: ['Telegram', 'WhatsApp']
+    messengers: 'Telegram, WhatsApp'
   },
   {
     id: 'three',
@@ -24,3 +24,5 @@ export const usersResponse: User[] = [
     refreshToken: 'asdasadansvnsdnfdaskdasjdjadjajsdjasjdajs'
   }
 ]
+
+// feature:add-user

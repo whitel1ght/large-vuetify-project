@@ -87,4 +87,6 @@ function close() {
 function submit() {
   eventBus.emit('submit:form')
 }
+
+// feature:add-user
 </script>

@@ -11,16 +11,21 @@
 
 <script setup>
 import { reactive, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { USER_TYPES_MAP } from '@/utils/users'
+
 
 const props = defineProps({ modelValue: String })
 const emit = defineEmits(['update:modelValue'])
+
+const { t } = useI18n()
 
 const internalModel = computed({
   get: () => props.modelValue,
   set: val => emit('update:modelValue', val)
 })
 
-// composable with translations here ?
-const types = [ 'User With Number', 'User With Password' ]
+const types = [...USER_TYPES_MAP.values()].map(type => t(type))
 
+// feature:add-user
 </script>

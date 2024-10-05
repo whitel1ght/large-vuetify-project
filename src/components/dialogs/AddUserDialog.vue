@@ -124,4 +124,5 @@ function submit() {
     next()
   }
 }
+// feature:add-user
 </script>
