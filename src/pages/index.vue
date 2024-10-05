@@ -74,7 +74,6 @@ const showEditUser = ref(false)
 
 // methods
 function addUser(user) {
-  console.log('addUser', user)
   users.value.push(user)
 }
 
@@ -89,7 +88,7 @@ function editItem(user) {
 }
 
 function deleteItem(item) {
-  console.log('deleteItem', item)
+  users.value = users.value.filter(user => user.id !== item.id)
 }
 
 // initialization

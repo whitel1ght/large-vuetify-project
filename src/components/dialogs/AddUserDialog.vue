@@ -52,15 +52,16 @@
           <v-btn
             variant="text"
             @click="show = false"
-            >
+          >
             Cancel
           </v-btn>
 
           <v-btn
-            variant="text"
+            variant="tonal"
+            :loading="loading"
             @click="submit"
           >
-            Submit
+            {{ step === 2 ? 'Submit' : 'Continue' }}
           </v-btn>
         </div>
       </div>
@@ -82,6 +83,7 @@ const emit = defineEmits(['update:modelValue'])
 const eventBus = mitt()
 
 // refs
+const loading = ref(false)
 const step = ref(1)
 const type = ref('User With Number')
 
@@ -111,13 +113,15 @@ function next() {
 
 function submit() {
   if (step.value === 2) {
+    loading.value = true
     eventBus.emit('submit')
+
+    setTimeout(() => {
+      loading.value = false
+      show.value = false
+    }, 1000)
   } else {
     next()
   }
-}
-
-function close() {
-  console.log('close')
 }
 </script>
