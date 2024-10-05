@@ -18,49 +18,50 @@
   </v-form>
 </template>
 
-<script setup>
-import { ref, reactive, onBeforeUnmount } from 'vue'
+<script setup lang="ts">
+import { ref, reactive, onBeforeUnmount, Ref } from 'vue'
+// types
 import { UserType } from '@/types/User'
+import type { UserWithNumber } from '@/types/UserWithNumber'
+import { Emitter } from 'mitt'
 
-const props = defineProps({
-  user: Object,
-  eventBus: Object
-})
+type Events = { 'submit': void }
 
-const emit = defineEmits(['submit:form', 'close:dialog'])
-
-const data = {
-  name: '',
-  phoneNumber: '',
-  messengers: ''
+interface UserWithNumberFormProps {
+  eventBus: Emitter<Events>
+  user: UserWithNumber
 }
 
+const props = defineProps<UserWithNumberFormProps>()
+const emit = defineEmits(['submit:form'])
+
+// constants
+const data = { name: '', phoneNumber: '', messengers: '' }
+
 // refs
-const userWithNumberForm = ref(null)
+const userWithNumberForm: Ref = ref(null)
 
 // reactive
 const form = reactive(data)
 
 // methods
 const onClose = () => {
-  emit('close:dialog')
-  userWithNumberForm.value.resetValidation()
+  userWithNumberForm.value?.resetValidation()
   Object.assign(form, data)
 }
 
-const create = async data => {
+const create = async (data: UserWithNumber) => {
   await new Promise(resolve => {
     setTimeout(() => {
-      resolve('created')
-      console.log('created', data)
+      resolve(data)
     }, 1000)
   })
 }
 
-const update = async data => {
+const update = async (data: UserWithNumber) => {
   await new Promise(resolve => {
     setTimeout(() => {
-      resolve('updated')
+      resolve(data)
     }, 1000)
   })
 }
@@ -69,10 +70,11 @@ const submit = async () => {
   const { valid = false } = await userWithNumberForm.value.validate()
   if (!valid) return
 
-  const data = {
+  const data: UserWithNumber = {
+    id: props.user?.id || '',
     type: UserType.WITH_NUMBER,
     name: form.name,
-    phoneNumber: form.phoneNumber,
+    phoneNumber: Number(form.phoneNumber),
     messengers: form.messengers
   }
 
@@ -92,7 +94,6 @@ onBeforeUnmount(() => {
 })
 
 //
-
 if (props.user) {
   Object.assign(form, props.user)
 }

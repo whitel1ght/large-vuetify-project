@@ -3,5 +3,5 @@ export interface UserWithNumber {
   type: number
   name: string
   phoneNumber: number
-  messengers: string[]
+  messengers: string
 }

@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onUnmounted } from 'vue'
+import { ref, reactive, onUnmounted, Ref } from 'vue'
 // types
 import { UserType } from '@/types/User'
 import { UserWithPassword } from '@/types/UserWithPassword'
@@ -35,9 +35,11 @@ interface UserWithPasswordFormProps {
 const props = defineProps<UserWithPasswordFormProps>()
 const emit = defineEmits(['submit:form'])
 
-// refs
+// constants
 const data = { name: '', surname: '', password: '' }
-const userWithPasswordForm = ref(null)
+
+// refs
+const userWithPasswordForm: Ref = ref(null)
 
 // reactive
 const form = reactive(data)
@@ -48,19 +50,19 @@ const onClose = () => {
   Object.assign(form, data)
 }
 
-const create = async () => {
+const create = async (data: UserWithPassword) => {
   await new Promise(resolve => {
     setTimeout(() => {
-      resolve('created')
+      resolve(data)
     }, 1000)
   })
   onClose()
 }
 
-const update = async () => {
+const update = async (data: UserWithPassword) => {
   await new Promise(resolve => {
     setTimeout(() => {
-      resolve('updated')
+      resolve(data)
     }, 1000)
   })
   onClose()
@@ -71,6 +73,7 @@ const submit = async () => {
   if (!valid) return
 
   const data: UserWithPassword = {
+    id: props.user?.id || '',
     type: UserType.WITH_PASSWORD,
     name: form.name,
     surname: form.surname,
@@ -84,6 +87,7 @@ const submit = async () => {
   }
 
   emit('submit:form', data)
+  onClose()
 }
 
 props.eventBus.on('submit', submit)
