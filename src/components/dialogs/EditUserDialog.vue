@@ -1,6 +1,7 @@
 <template>
   <v-dialog
     v-model="internalModel"
+    width="600"
     @click:outside="internalModel = false"
     @keydown.esc="internalModel = false"
   >
@@ -13,6 +14,7 @@
         <component
           :is="currentForm"
           :event-bus="eventBus"
+          :user="props.user"
           @close:dialog="close"
           @submit:form="submit"
         />
@@ -20,13 +22,13 @@
 
       <v-card-actions>
         <v-btn
-          text
+          variant="text"
           @click="$emit('update:modelValue', false)"
         >
           Cancel
         </v-btn>
         <v-btn
-          text
+          variant="tonal"
           @click="submit"
         >
           Submit
@@ -39,18 +41,16 @@
 <script setup lang="ts">
 import { defineAsyncComponent, computed  } from 'vue'
 // types
-import { UserType } from '@/types/User'
+import { UserType, User } from '@/types/User'
 // utils
 import mitt from 'mitt'
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
-  user: Object
-})
+interface EditUserDialogProps {
+  modelValue: boolean
+  user: User
+}
 
+const props = defineProps<EditUserDialogProps>()
 const emit = defineEmits(['update:modelValue'])
 
 // constants
@@ -68,12 +68,15 @@ const currentForm = computed(() => {
     UserWithPasswordForm: defineAsyncComponent(() => import('@/components/forms/UserWithPasswordForm.vue'))
   }
 
-  const types = new Map([
+  const types: Map<UserType, string> = new Map([
     [UserType.WITH_NUMBER, 'UserWithNumberForm'],
     [UserType.WITH_PASSWORD, 'UserWithPasswordForm']
   ])
 
-  return forms[types.get(props.user.type)]
+  const userType: UserType = props.user.type
+
+
+  return forms[types.get(userType)!] as any
 })
 
 // methods

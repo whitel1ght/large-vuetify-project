@@ -33,8 +33,7 @@
           <component
             :is="nextStepForm"
             :event-bus="eventBus"
-            @close:dialog="close"
-            @submit:form="submit"
+            v-bind="$attrs"
           />
         </v-stepper-window-item>
       </v-stepper-window>
@@ -77,7 +76,7 @@ import UserTypeForm from '@/components/forms/UserTypeForm.vue'
 import mitt from 'mitt'
 
 const props = defineProps({ modelValue: Boolean })
-const emit = defineEmits(['update:modelValue', 'close:dialog', 'submit:form'])
+const emit = defineEmits(['update:modelValue'])
 
 // consts
 const eventBus = mitt()
@@ -112,9 +111,7 @@ function next() {
 
 function submit() {
   if (step.value === 2) {
-    // submit form
     eventBus.emit('submit')
-    console.log('submit form')
   } else {
     next()
   }
