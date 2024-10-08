@@ -33,6 +33,7 @@ sub main {
 
   update_user_ts($user_type, $enum_key);
   update_user_types_map($user_type, $enum_key);
+  update_user_response($user_type, $enum_key, @keys);
 }
 
 # sets user type, enum key and keys
@@ -115,6 +116,37 @@ sub update_user_types_map {
   close $output;
 
   move($temp_file, $user_types_map);
+}
+
+sub update_user_response {
+  my ($user_type, $enum_key, @keys) = @_;
+
+  my $user_response = 'src/mock/usersResponse.ts';
+  my $temp_file = 'src/mock/usersResponse.ts.temp';
+
+  open my $input, '<', $user_response;
+  open my $output, '>', $temp_file;
+
+  while (my $line = <$input>) {
+    print $output $line;
+
+    if ($line =~ /export const usersResponse./){
+      print $output "  {\n";
+      for my $key (@keys) {
+        if ($key eq 'type') {
+          print $output "    $key: UserType.${enum_key},\n";
+        } else {
+          print $output "    $key: 'edit me',\n";
+        }
+      }
+      print $output "  },\n";
+    }
+  }
+
+  close $input;
+  close $output;
+
+  move($temp_file, $user_response);
 }
 
 main();
