@@ -34,6 +34,7 @@ sub main {
   update_user_ts($user_type, $enum_key);
   update_user_types_map($user_type, $enum_key);
   update_user_response($user_type, $enum_key, @keys);
+  update_users_json($user_type, $enum_key, @keys);
 }
 
 # sets user type, enum key and keys
@@ -147,6 +148,33 @@ sub update_user_response {
   close $output;
 
   move($temp_file, $user_response);
+}
+
+sub update_users_json {
+  my ($user_type, $enum_key, @keys) = @_;
+
+  my $users_json = 'src/lang/en/Users.json';
+  my $temp_file = 'src/lang/en/Users.json.temp';
+
+  open my $input, '<', $users_json;
+  open my $output, '>', $temp_file;
+
+  while (my $line = <$input>) {
+    print $output $line;
+
+    if ($line =~ /.*"types": \{/){
+      # WITH_TOKEN transform to withToken
+      my $camelcase_enum_key = uncapitalize_first_char(join('', map { ucfirst(lc($_)) } split(/_/, $enum_key)));
+      my $words_user_type = join(' ', split(/(?=[A-Z])/, $user_type));
+
+      print $output "    \"$camelcase_enum_key\": \"$words_user_type\",\n";
+    }
+  }
+
+  close $input;
+  close $output;
+
+  move($temp_file, $users_json);
 }
 
 main();
