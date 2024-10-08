@@ -14,6 +14,14 @@ use File::Copy;
 # - import form to AddUserDialog (src/components/dialogs/AddUserDialog.vue)
 # - import form to EditUserDialog (src/components/dialogs/EditUserDialog.vue)
 
+
+# util functions
+sub uncapitalize_first_char {
+  my ($str) = @_;
+  return lc(substr($str, 0, 1)) . substr($str, 1);
+}
+
+# entry point
 sub main {
   my $ts_file = $ARGV[0];
 
@@ -24,6 +32,7 @@ sub main {
   print "Enum key: ${enum_key}\n";
 
   update_user_ts($user_type, $enum_key);
+  update_user_types_map($user_type, $enum_key);
 }
 
 # sets user type, enum key and keys
@@ -82,6 +91,30 @@ sub update_user_ts {
   close $output;
 
   move($temp_file, $user_ts);
+}
+
+sub update_user_types_map {
+  my ($user_type, $enum_key) = @_;
+
+  my $user_types_map = 'src/utils/users.js';
+  my $temp_file = 'src/utils/users.js.temp';
+
+  open my $input, '<', $user_types_map;
+  open my $output, '>', $temp_file;
+
+  while (my $line = <$input>) {
+    print $output $line;
+
+    if ($line =~ /export const USER_TYPES_MAP./){
+      my $uncapitalized_user_type = uncapitalize_first_char($user_type);
+      print $output "  [UserType.${enum_key}, 'Users.types.$uncapitalized_user_type'],\n";
+    }
+  }
+
+  close $input;
+  close $output;
+
+  move($temp_file, $user_types_map);
 }
 
 main();
