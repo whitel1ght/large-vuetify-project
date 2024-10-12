@@ -118,7 +118,7 @@ sub update_user_types_map {
     print $output $line;
 
     if ($line =~ /export const USER_TYPES_MAP./){
-      my $uncapitalized_user_type = uncapitalize_first_char($user_type);
+      my $uncapitalized_user_type = uncapitalize_first_char(substr($user_type, 4));
       print $output "  [UserType.${enum_key}, 'Users.types.$uncapitalized_user_type'],\n";
     }
   }
@@ -169,16 +169,45 @@ sub update_users_json {
   open my $input, '<', $users_json;
   open my $output, '>', $temp_file;
 
-  while (my $line = <$input>) {
-    print $output $line;
+  my $camelcase_enum_key = uncapitalize_first_char(join('', map { ucfirst(lc($_)) } split(/_/, $enum_key)));
+  my $words_user_type = join(' ', split(/(?=[A-Z])/, $user_type));
 
+  while (my $line = <$input>) {
     if ($line =~ /.*"types": \{/){
+      print $output $line;
       # WITH_TOKEN transform to withToken
-      my $camelcase_enum_key = uncapitalize_first_char(join('', map { ucfirst(lc($_)) } split(/_/, $enum_key)));
-      my $words_user_type = join(' ', split(/(?=[A-Z])/, $user_type));
 
       print $output "    \"$camelcase_enum_key\": \"$words_user_type\",\n";
+      next;
     }
+
+    if (trim($line) eq "\"withNumber\": {") {
+      print $output "  \"$camelcase_enum_key\": {\n";
+
+      my $length = scalar @keys;
+      my $i = 0;
+      foreach my $key (@keys) {
+        if ($key eq 'id' || $key eq 'type') {
+          $i++;
+          next;
+        }
+
+        my $key_words = join(' ', split(/(?=[A-Z])/, $key));
+
+        if ($i == $length - 1) {
+          print $output "    \"$key\": \"$key_words \"\n";
+        } else {
+          print $output "    \"$key\": \"$key_words \",\n";
+        }
+        $i++;
+      }
+      print $output "  },\n";
+
+      print $output $line;
+      next;
+    }
+
+    print $output $line;
   }
 
   close $input;
