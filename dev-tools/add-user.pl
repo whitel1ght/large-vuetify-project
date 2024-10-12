@@ -43,6 +43,8 @@ sub main {
   update_user_response($user_type, $enum_key, @keys);
   update_users_json($user_type, $enum_key, @keys);
   copy_user_form($user_type, $enum_key, @keys);
+  import_user_form_to_add_user_dialog($user_type);
+  import_user_form_to_edit_user_dialog($user_type, $enum_key);
 }
 
 # sets user type, enum key and keys
@@ -246,6 +248,55 @@ sub copy_user_form {
   close $output;
 
   move($temp_file, $form_file);
+}
+
+sub import_user_form_to_add_user_dialog {
+  my ($user_type) = @_;
+  my $import = "    ${user_type}Form: defineAsyncComponent(() => import('@/components/forms/${user_type}Form.vue')),\n";
+
+  open my $input, '<', 'src/components/dialogs/AddUserDialog.vue';
+  open my $output, '>', 'src/components/dialogs/AddUserDialog.vue.temp';
+
+  while (<$input>) {
+    print $output $_;
+
+    if (trim($_) eq "const forms = {") {
+      print $output $import;
+      next;
+    }
+  }
+
+  close $input;
+  close $output;
+
+  move('src/components/dialogs/AddUserDialog.vue.temp', 'src/components/dialogs/AddUserDialog.vue');
+}
+
+sub import_user_form_to_edit_user_dialog {
+  my ($user_type, $enum_key) = @_;
+  my $import = "    ${user_type}Form: defineAsyncComponent(() => import('@/components/forms/${user_type}Form.vue')),\n";
+
+  open my $input, '<', 'src/components/dialogs/EditUserDialog.vue';
+  open my $output, '>', 'src/components/dialogs/EditUserDialog.vue.temp';
+
+  while (<$input>) {
+    print $output $_;
+
+    if (trim($_) eq "const forms = {") {
+      print $output $import;
+      next;
+    }
+
+    if (trim($_) eq "const types: Map<UserType, string> = new Map([") {
+      print $output "    [UserType.${enum_key}, '${user_type}Form'],\n";
+      next;
+    }
+  }
+
+  close $input;
+  close $output;
+
+  move('src/components/dialogs/EditUserDialog.vue.temp', 'src/components/dialogs/EditUserDialog.vue');
 }
 
 main();
