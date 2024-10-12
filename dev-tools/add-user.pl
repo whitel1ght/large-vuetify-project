@@ -10,7 +10,7 @@ use File::Copy;
 # - update USER_TYPES_MAP (src/utils/users.js)
 # - update userResponse (src/mock/userResponse.ts)
 # - update json file with translations (src/lang/en/Users.json)
-# - create form (src/components/forms/)
+# - copy form from devtools/templates/UserForm.txt to src/components/forms/
 # - import form to AddUserDialog (src/components/dialogs/AddUserDialog.vue)
 # - import form to EditUserDialog (src/components/dialogs/EditUserDialog.vue)
 
@@ -19,6 +19,13 @@ use File::Copy;
 sub uncapitalize_first_char {
   my ($str) = @_;
   return lc(substr($str, 0, 1)) . substr($str, 1);
+}
+
+# trim whitespaces
+sub trim {
+  my $s = shift;
+  $s =~ s/^\s+|\s+$//g;
+  return $s;
 }
 
 # entry point
@@ -35,6 +42,7 @@ sub main {
   update_user_types_map($user_type, $enum_key);
   update_user_response($user_type, $enum_key, @keys);
   update_users_json($user_type, $enum_key, @keys);
+  copy_user_form($user_type, $enum_key, @keys);
 }
 
 # sets user type, enum key and keys
@@ -175,6 +183,69 @@ sub update_users_json {
   close $output;
 
   move($temp_file, $users_json);
+}
+
+sub copy_user_form {
+  my ($user_type, $enum_key, @keys) = @_;
+
+  my $form_file = 'src/components/forms/' . $user_type . 'Form.vue';
+  my $temp_file = $form_file . '.temp';
+
+  copy 'dev-tools/templates/UserForm.txt', $form_file;
+
+  open my $input, '<', $form_file;
+  open my $output, '>', $temp_file;
+
+  my $user_ref = lcfirst($user_type) . 'Form';
+  my $json_section = uncapitalize_first_char(join('', map { ucfirst(lc($_)) } split(/_/, $enum_key)));
+
+
+  while (<$input>) {
+    s/VAR_REF/$user_ref/g;
+    s/VAR_TYPE/$user_type/g;
+    s/VAR_ENUM_KEY/$enum_key/g;
+    s/JSON_SECTION/$json_section/g;
+
+    if (trim($_) eq "PLACEHOLDER DATA") {
+      foreach my $key (@keys) {
+        if ($key eq 'id' || $key eq 'name' || $key eq 'type') {
+          next;
+        }
+        say $output "  $key: '',";
+      }
+      next;
+    }
+
+    if (trim($_) eq "PLACEHOLDER TEMPLATE") {
+      open my $in, '<', 'dev-tools/templates/TextField.txt';
+      my @template_lines = <$in>;
+      close $in;
+
+      foreach my $key (@keys) {
+        if ($key eq 'id' || $key eq 'name' || $key eq 'type') {
+          next;
+        }
+        foreach my $line (@template_lines) {
+          my $modified_line = $line;
+          $modified_line =~ s/FIELD/$key/g;
+          print $output $modified_line;
+        }
+      }
+      next;
+    }
+
+    print $output $_;
+  }
+
+  # make all replacements later
+  while (<$input>) {
+    print $output $_;
+  }
+
+  close $input;
+  close $output;
+
+  move($temp_file, $form_file);
 }
 
 main();

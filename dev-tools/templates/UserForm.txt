@@ -1,0 +1,97 @@
+<template>
+  <v-form ref="VAR_REF">
+    <v-text-field
+      v-model="form.name"
+      :label="t('Users.JSON_SECTION.name')"
+    />
+    PLACEHOLDER TEMPLATE
+  </v-form>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, onBeforeUnmount, Ref } from 'vue'
+// composables
+import { useI18n } from 'vue-i18n'
+// types
+import { UserType } from '@/types/User'
+import type { VAR_TYPE } from '@/types/VAR_TYPE'
+import { Emitter } from 'mitt'
+
+type Events = { 'submit': void }
+
+interface VAR_TYPEFormProps {
+  eventBus: Emitter<Events>
+  user: VAR_TYPE
+}
+
+const props = defineProps<VAR_TYPEFormProps>()
+const emit = defineEmits(['submit:form'])
+
+// composables
+const { t } = useI18n()
+
+// constants
+const data = {
+  name: '',
+  PLACEHOLDER DATA
+}
+
+// refs
+const VAR_REF: Ref = ref(null)
+
+// reactive
+const form = reactive(data)
+
+// methods
+const onClose = () => {
+  VAR_REF.value?.resetValidation()
+  Object.assign(form, data)
+}
+
+const create = async (data: VAR_TYPE) => {
+  await new Promise(resolve => {
+    setTimeout(() => {
+      resolve(data)
+    }, 1000)
+  })
+}
+
+const update = async (data: VAR_TYPE) => {
+  await new Promise(resolve => {
+    setTimeout(() => {
+      resolve(data)
+    }, 1000)
+  })
+}
+
+const submit = async () => {
+  const { valid = false } = await VAR_REF.value.validate()
+  if (!valid) return
+
+  const data: VAR_TYPE = {
+    id: props.user?.id || '',
+    type: UserType.VAR_ENUM_KEY,
+    name: form.name,
+    PLACEHOLDER DATA
+  }
+
+  if (props.user) {
+    await update(data)
+  } else {
+    await create(data)
+  }
+  emit('submit:form', data)
+  onClose()
+}
+
+props.eventBus.on('submit', submit)
+
+onBeforeUnmount(() => {
+  props.eventBus.off('submit', submit)
+})
+
+//
+if (props.user) {
+  Object.assign(form, props.user)
+}
+</script>

@@ -1,0 +1,4 @@
+    <v-text-field
+      v-model="form.FIELD"
+      :label="t('Users.JSON_SECTION.FIELD')"
+    />
