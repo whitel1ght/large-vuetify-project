@@ -28,7 +28,7 @@ type Events = { 'submit': void }
 
 interface UserWithNumberFormProps {
   eventBus: Emitter<Events>
-  user: UserWithNumber
+  user?: UserWithNumber
 }
 
 const props = defineProps<UserWithNumberFormProps>()

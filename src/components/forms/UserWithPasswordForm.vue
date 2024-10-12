@@ -27,7 +27,7 @@ type Events = { 'submit': void }
 
 interface UserWithPasswordFormProps {
   eventBus: Emitter<Events>
-  user: UserWithPassword
+  user?: UserWithPassword
 }
 
 const props = defineProps<UserWithPasswordFormProps>()
