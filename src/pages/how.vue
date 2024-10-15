@@ -46,8 +46,8 @@ const slides = [
   {
     title: 'HOW',
     list: [
-      '🧨  Create your own tools and workflows',
       '🔧  Know your tools and learn new ones',
+      '🧨  Create your own tools and workflows',
       '🔮  Focus on the process, not just the outcome',
       '❓  Question everything',
     ],
